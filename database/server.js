@@ -3,7 +3,6 @@ const { default: mongoose } = require("mongoose");
 const UserModel = require("./models/user.model");
 
 const app = express();
-
 app.use(express.json());
 
 const connectDb = async () => {
