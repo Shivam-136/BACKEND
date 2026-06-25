@@ -1,7 +1,5 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const connectDB = require("./src/config/db");
-
 const ProductModel = require("./src/models/product.model");
 
 connectDB();
@@ -10,29 +8,9 @@ const app = express();
 
 app.use(express.json());
 
-// Get All Products
-app.get("/api/product", async (req, res) => {
+// CREATE PRODUCT
+app.post("/api/product/create", async (req, res) => {
   try {
-    let allProducts = await ProductModel.find();
-
-    return res.status(200).json({
-      success: true,
-      message: "All products fetched",
-      data: allProducts,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-});
-
-// Update Product
-app.patch("/api/product/update/:productId", async (req, res) => {
-  try {
-    const { productId } = req.params;
-
     const {
       productName,
       description,
@@ -42,30 +20,25 @@ app.patch("/api/product/update/:productId", async (req, res) => {
       amount,
     } = req.body;
 
-    const updatedProduct = await ProductModel.findByIdAndUpdate(
-      productId,
-      {
-        productName,
-        description,
-        category,
-        imageUrl,
-        price: {
-          currency,
-          amount,
-        },
+    const newProduct = await ProductModel.create({
+      productName,
+      description,
+      category,
+      imageUrl,
+      price: {
+        currency,
+        amount,
       },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    });
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
-      message: "Product updated",
-      data: updatedProduct,
+      message: "Product created",
+      data: newProduct,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -73,12 +46,39 @@ app.patch("/api/product/update/:productId", async (req, res) => {
   }
 });
 
-// Get Single Product
+// GET ALL PRODUCTS
+app.get("/api/product", async (req, res) => {
+  try {
+    const allProducts = await ProductModel.find();
+
+    return res.status(200).json({
+      success: true,
+      message: "All products fetched",
+      data: allProducts,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
+// GET SINGLE PRODUCT
 app.get("/api/product/:productId", async (req, res) => {
   try {
     const { productId } = req.params;
 
     const product = await ProductModel.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -86,6 +86,8 @@ app.get("/api/product/:productId", async (req, res) => {
       data: product,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -93,18 +95,64 @@ app.get("/api/product/:productId", async (req, res) => {
   }
 });
 
-// Delete Product
+// UPDATE PRODUCT
+app.patch("/api/product/update/:productId", async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      productId,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product updated",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+});
+
+// DELETE PRODUCT
 app.delete("/api/product/delete/:productId", async (req, res) => {
   try {
     const { productId } = req.params;
 
-    await ProductModel.findByIdAndDelete(productId);
+    const deletedProduct = await ProductModel.findByIdAndDelete(productId);
+
+    if (!deletedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
 
     return res.status(200).json({
       success: true,
       message: "Product deleted",
+      data: deletedProduct,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
