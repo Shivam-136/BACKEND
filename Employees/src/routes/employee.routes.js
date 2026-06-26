@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.post("/create", createEmployeeControler)
 router.get("/", getAllEmployeeControler)
-router.get("/empId", getsingleEmployeeControler)
+router.get("/:empId", getSingleEmployeeControler)
 router.patch("/update/:empId", updateEmployeeControler)
 router.delete("/delete/:empId", deleteEmployeeControler)
 

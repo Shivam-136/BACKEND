@@ -1,4 +1,4 @@
-import EmployeeModel from "../models/employee.model";
+import EmployeeModel from "../models/employee.model.js";
 
 export const createEmployeeControler = async (req, res) => {
   try {
@@ -10,10 +10,10 @@ export const createEmployeeControler = async (req, res) => {
       address,
       company,
       employeeId,
-    } = res.body
+    } = req.body
 
     if (!employeeName || !email || !employeeId) 
-      return res.ststus(400).json({
+      return res.status(400).json({
         success: false,
         Message: "All fields are required"
       })
@@ -28,7 +28,7 @@ export const createEmployeeControler = async (req, res) => {
       employeeId,
     })
        
-    return res.ststus(201).json({
+    return res.status(201).json({
       success: true,
       message: "Employee created",
       data: newEmployee,
@@ -47,7 +47,7 @@ export const createEmployeeControler = async (req, res) => {
   try {
     const allEmployee = await EmployeeModel.find()
 
-    return res.ststus(200).json({
+    return res.status(200).json({
       success: true,
       message: "Employees fatched",
       data: allEmployee
@@ -65,12 +65,12 @@ export const getSingleEmployeeControler = async (req, res) => {
   try {
     let {empId}=req.params
 
-    const employee = await EmployeeModel.findById(empid)
+    const employee = await EmployeeModel.findById(empId)
 
     return res.status(200).json({
       success: true,
       Message: "Employee fatched",
-      data: employee
+      data: employee,
     })
   } catch (error) {
     return res.status(500).json({
@@ -96,7 +96,7 @@ export const updateEmployeeControler = async (req, res) => {
       employeeId,
     } = req.body;
 
-    const employee = EmployeeModel.findByIdAndUpdate(
+    const employee = await EmployeeModel.findByIdAndUpdate(
       empId,
       {
         employeeName,
@@ -125,6 +125,7 @@ export const updateEmployeeControler = async (req, res) => {
     })
   }
 }
+
 
 /////////////////////////////
 
