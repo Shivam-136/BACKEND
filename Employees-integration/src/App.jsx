@@ -36,7 +36,6 @@ const App = () => {
 
   return (
     <div>
-
       <form
         onSubmit={handleSubmit}
         style={{
