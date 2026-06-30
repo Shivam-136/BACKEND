@@ -8,7 +8,7 @@
 const express = require("express");
 const app = express();
 
-app.use(express.json());
+app.use(express.json());  // Parses incoming JSON data into req.body
 
 // GET => Fetch data
 app.get("/users", (req, res) => {
@@ -33,7 +33,7 @@ app.post("/users", (req, res) => {
 app.put("/users/:id", (req, res) => {
     const { id } = req.params;
     const updatedUser = req.body;
-
+      
     res.json({
         success: true,
         message: `User ${id} replaced successfully`,
@@ -66,3 +66,6 @@ app.delete("/users/:id", (req, res) => {
 app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });
+
+
+ 
