@@ -12,57 +12,57 @@ app.use(express.json());
 
 // GET => Fetch data
 app.get("/users", (req, res) => {
-  res.json({
-    success: true,
-    message: "All users fetched successfully",
-  });
+    res.json({
+        success: true,
+        message: "All users fetched successfully",
+    });
 });
 
 // POST => Create new data
 app.post("/users", (req, res) => {
-  const user = req.body;
+    const user = req.body;
 
-  res.status(201).json({
-    success: true,
-    message: "User created successfully",
-    data: user,
-  });
+    res.status(201).json({
+        success: true,
+        message: "User created successfully",
+        data: user,
+    });
 });
 
 // PUT => Completely update/replace data
 app.put("/users/:id", (req, res) => {
-  const { id } = req.params;
-  const updatedUser = req.body;
+    const { id } = req.params;
+    const updatedUser = req.body;
 
-  res.json({
-    success: true,
-    message: `User ${id} replaced successfully`,
-    data: updatedUser,
-  });
+    res.json({
+        success: true,
+        message: `User ${id} replaced successfully`,
+        data: updatedUser,
+    });
 });
 
 // PATCH => Partially update data
 app.patch("/users/:id", (req, res) => {
-  const { id } = req.params;
-  const updatedFields = req.body;
+    const { id } = req.params;
+    const updatedFields = req.body;
 
-  res.json({
-    success: true,
-    message: `User ${id} updated successfully`,
-    data: updatedFields,
-  });
+    res.json({
+        success: true,
+        message: `User ${id} updated successfully`,
+        data: updatedFields,
+    });
 });
 
 // DELETE => Delete data
 app.delete("/users/:id", (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  res.json({
-    success: true,
-    message: `User ${id} deleted successfully`,
-  });
+    res.json({
+        success: true,
+        message: `User ${id} deleted successfully`,
+    });
 });
 
 app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+    console.log("Server is running on port 3000");
 });
