@@ -1,0 +1,19 @@
+require("dotenv").config();
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const connectDB = require("./src/config/db");
+const userRoutes = require("./src/routes/user.routes");
+
+const app = express();
+
+connectDB();
+
+app.use(cookieParser());
+
+app.use(express.json());
+
+app.use("/api/auth", userRoutes);
+
+app.listen(3000, () => {
+  console.log("running on port 3000");
+});
