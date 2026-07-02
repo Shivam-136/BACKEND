@@ -1,41 +1,94 @@
-const bcrypt = require("bcryptjs");
-const UserModel = require("../models/user.model");
+const bcrypt = require("bcrypt")
+const UserModel = require("../models/user.model")
 
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken")
 
-const registerController = async (req, res) => {
+const registerController = async(req , res)=>{
   try {
-    const { name, email, password } = req.body;
+    const {name , email ,password} = req.body;;
 
-    if (!name || !email || !password)
+    if(!name || !email || !password)
       return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
-
-    const hashPass = bcrypt.hashSync(password, 10);
+    success:false,
+    massage:"All fildes are required",
+    })
+   
+    const hashPass = bcrypt.hashSync(password , 10)
 
     const user = await UserModel.create({
       name,
       email,
-      password: hashPass,
-    });
+      password:hashPass,
+    })
 
-    if (!user)
+   if(!user)
+    return res.status(400).json({
+  success:false,
+  massage:"user registration failed"
+})
+
+const token =  jwt.sign({
+    id:user._id
+  },
+   process.env.JWT_SECRET_KEY,
+   {
+  expiresIn:"1h"
+})
+
+res.cookie("secret",token)
+
+return  res.status(201).json({
+  success:false,
+  massage:"Something went worng",
+  data:user,
+})
+  } catch (error) {
+    return res.status(500).json({
+      success:false,
+      message:"something went wrong"
+    })
+  }
+}
+
+const loginController = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password)
       return res.status(400).json({
         success: false,
-        message: "User registration failed",
+        message: "Email and password is required",
       });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1h",
-    });
+    const user = await UserModel.findOne({ email });
+
+    if (!user)
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+
+    const comparePass = bcrypt.compareSync(password, user.password);
+
+    if (!comparePass)
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+
+    const token = jwt.sign(
+      { id: user._id},
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1h",
+      }
+    );
 
     res.cookie("secret", token);
 
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
-      message: "User registered",
+      message: "User loggedIn",
       data: user,
     });
   } catch (error) {
@@ -47,42 +100,7 @@ const registerController = async (req, res) => {
   }
 };
 
-const loginController = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password)
-      return res.status(400).json({
-        success: false,
-        message: "email and password is required",
-      });
-
-    const isUserExist = await UserModel.findOne({ email });
-
-    if (!isUserExist)
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-
-    const comparePass = bcrypt.compareSync(password, isUserExist.password);
-
-    if (!comparePass)
-      return res.status(401).json({
-        success: false,
-        message: "Invalid credential",
-      });
-
-      
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error,
-    });
-  }
-};
-
 module.exports = {
-  registerController
+  registerController,
+  loginController,
 };
