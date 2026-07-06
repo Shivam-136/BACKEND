@@ -3,102 +3,104 @@ const UserModel = require("../models/user.model")
 
 const jwt = require("jsonwebtoken")
 
-const registerController = async(req , res)=>{
+const registerController = async (req, res) => {
   try {
-    const {name , email ,password} = req.body;;
+    const { name, email, password } = req.body;;
 
-    if(!name || !email || !password)
+    if (!name || !email || !password)
       return res.status(400).json({
-    success:false,
-    massage:"All fildes are required",
-    })
-   
-    const hashPass = bcrypt.hashSync(password , 10)
+        success: false,
+        massage: "All fildes are required",
+      })
+
+    const hashPass = bcrypt.hashSync(password, 10)
 
     const user = await UserModel.create({
       name,
       email,
-      password:hashPass,
+      password: hashPass,
     })
 
-   if(!user)
-    return res.status(400).json({
-  success:false,
-  massage:"user registration failed"
-})
+    if (!user)
+      return res.status(400).json({
+        success: false,
+        massage: "user registration failed"
+      })
 
-const token =  jwt.sign({
-    id:user._id
-  },
-   process.env.JWT_SECRET_KEY,
-   {
-  expiresIn:"1h"
-})
+    const token = jwt.sign({
+      id: user._id
+    },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: "1h"
+      })
 
-res.cookie("secret",token)
+    res.cookie("secret", token)
 
-return  res.status(201).json({
-  success:false,
-  massage:"Something went worng",
-  data:user,
-})
+    return res.status(201).json({
+      success: false,
+      massage: "Something went worng",
+      data: user,
+    })
   } catch (error) {
     return res.status(500).json({
-      success:false,
-      message:"something went wrong"
+      success: false,
+      message: "something went wrong"
     })
   }
 }
 
 const loginController = async (req, res) => {
   try {
+
     const { email, password } = req.body;
 
     if (!email || !password)
       return res.status(400).json({
         success: false,
-        message: "Email and password is required",
-      });
+        massage: "Email and password is required"
+      })
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email })
 
     if (!user)
       return res.status(404).json({
         success: false,
-        message: "User not found",
-      });
+        message: "User not found"
+      })
 
-    const comparePass = bcrypt.compareSync(password, user.password);
+    const comparePass = bcrypt.compareSync(password, user.password)
 
     if (!comparePass)
       return res.status(401).json({
         success: false,
-        message: "Invalid credentials",
-      });
+        message: "Invalid credentials"
+      })
 
     const token = jwt.sign(
-      { id: user._id},
+      { id: user.id },
       process.env.JWT_SECRET_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "1h"
       }
-    );
+    )
 
-    res.cookie("secret", token);
+    res.cookie("secret", token) // secrect token ka name , token Cookie ki value (JWT token)
 
     return res.status(200).json({
       success: true,
       message: "User loggedIn",
       data: user,
-    });
+    })
+
   } catch (error) {
     return res.status(500).json({
       success: false,
       message: "Something went wrong",
       error,
-    });
+    })
   }
-};
+}
 
 module.exports = {
   registerController,
