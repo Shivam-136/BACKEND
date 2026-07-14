@@ -6,8 +6,8 @@ const storageInstance = new ImageKit({
   urlEndpoint: process.env.IMAGEKIT_URL,
 });
 
-const sendFile = async (file, fileName) => {
-  return await storageInstance.upload({ file, fileName });
-};
+const sendFile = async (file , fileName) => {
+  return await storageInstance.upload({file , fileName  })
+}
 
-module.exports = sendFile;
+module.exports = sendFile
