@@ -13,7 +13,7 @@ const getImageController = async (req, res) => {
 
     const uploadedFile = await sendFile(file.buffer, file.originalname)
     console.log(uploadedFile)
- 5
+
     return res.status(200).json({
       success: true,
       message: "File uploaded"
