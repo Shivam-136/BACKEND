@@ -1,5 +1,5 @@
 import multer from "multer"
 
-let storage = multer.memoryStorage()
+const storage = multer.memoryStorage()
 
-export const uplode = multer({storage})
+export const upload = multer({storage})

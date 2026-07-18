@@ -1,12 +1,16 @@
-import express from "express"
-import dotenv from "dotenv"
-dotenv.config()
+import express from "express";
+import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import authRoutes from "./routes/auth.routes.js";
 
-const app = express()
+dotenv.config();
 
-app.use(cookieParser())
+const app = express();
 
-app.use = (express.json())
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-export default app
+app.use("/api/auth", authRoutes);
+
+export default app;
