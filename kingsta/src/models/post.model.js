@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-const postSchem = new mongoose.Schema(
- {
+const postSchema = new mongoose.Schema(
+  {
     media_urls: [
       {
         type: String,
@@ -30,7 +30,7 @@ const postSchem = new mongoose.Schema(
   {
     timestamps: true,
   }
-)
+);
 
 const PostModel = mongoose.model("posts", postSchema);
 export default PostModel;
